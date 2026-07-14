@@ -112,15 +112,16 @@ document.addEventListener("DOMContentLoaded", () => {
         avatarHTML = `<div class="contributor-avatar-fallback ${avatarClass}">${firstLetter}</div>`;
       }
       
-      // Generate mini SVG sparkline
+      // Target profile link
+      const profileUrl = c.profile_url || "#";
       const sparklineHTML = generateSparklineSVG(c.history);
       
       card.innerHTML = `
         <div class="contributor-header">
-          <div class="contributor-profile">
+          <a href="${profileUrl}" target="_blank" rel="noopener noreferrer" class="contributor-profile">
             ${avatarHTML}
             <div class="contributor-name" title="${c.name}">${c.name}</div>
-          </div>
+          </a>
           <span class="contributor-rank">${rank}</span>
         </div>
         <div class="contributor-stats">

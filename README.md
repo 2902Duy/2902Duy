@@ -47,7 +47,7 @@ Below is a dynamically generated table of the AI models and collaborators that h
 | Co-Author / AI Assistant | Commits | Email Alias |
 | :--- | :---: | :--- |
 | **Claude** | 195 | `noreply@anthropic.com` |
-| **ChatGPT** | 32 | `noreply@openai.com` |
+| **Codex** | 32 | `noreply@openai.com` |
 | **Antigravity** | 18 | `antigravity@google.com` |
 | **Devin AI** | 1 | `158243242+devin-ai-integration[bot]@users.noreply.github.com` |
 

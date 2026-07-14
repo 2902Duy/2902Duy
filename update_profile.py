@@ -60,7 +60,8 @@ def parse_git_history(repo_path):
         "commits": 0,
         "additions": 0,
         "deletions": 0,
-        "history": defaultdict(int)
+        "history": defaultdict(int),
+        "daily_history": defaultdict(int)
     })
     
     try:
@@ -106,6 +107,10 @@ def parse_git_history(repo_path):
             
             # Find the week start (Monday)
             week_start = get_week_monday(timestamp)
+            
+            # Find the daily date string (YYYY-MM-DD)
+            dt = datetime.date.fromtimestamp(float(timestamp))
+            day_str = dt.strftime('%Y-%m-%d')
             
             # Identify co-authors in this commit's body
             commit_coauthors = []
@@ -154,6 +159,7 @@ def parse_git_history(repo_path):
                 contributors_data[author_key]["additions"] += commit_additions
                 contributors_data[author_key]["deletions"] += commit_deletions
                 contributors_data[author_key]["history"][week_start] += 1
+                contributors_data[author_key]["daily_history"][day_str] += 1
                 
                 # 2. Attribute stats to all co-authors
                 for co_name, co_email in commit_coauthors:
@@ -162,6 +168,7 @@ def parse_git_history(repo_path):
                     contributors_data[co_key]["additions"] += commit_additions
                     contributors_data[co_key]["deletions"] += commit_deletions
                     contributors_data[co_key]["history"][week_start] += 1
+                    contributors_data[co_key]["daily_history"][day_str] += 1
                     
     except Exception as e:
         print(f"Error scanning repo at {repo_path}: {e}")
@@ -193,28 +200,28 @@ def normalize_contributor(name, email):
     # Check your own signatures first
     is_self = any(sig in lower_name or sig in lower_email for sig in USER_SIGNATURES)
     if is_self:
-        return "2902Duy", "tduy29.2k4@gmail.com", "https://github.com/2902Duy.png", True
+        return "2902Duy", "tduy29.2k4@gmail.com", "https://github.com/2902Duy.png", True, "https://github.com/2902Duy"
         
     # Check AI/bot models
     if "claude" in lower_name or "claude" in lower_email:
-        return "Claude", "noreply@anthropic.com", "https://github.com/claude.png", True
+        return "Claude", "noreply@anthropic.com", "https://github.com/claude.png", True, "https://github.com/claude"
         
     if "gemini" in lower_name or "gemini" in lower_email or "antigravity" in lower_name or "antigravity" in lower_email:
-        return "Antigravity", "antigravity@google.com", "https://github.com/google-antigravity.png", True
+        return "Antigravity", "antigravity@google.com", "https://github.com/google-antigravity.png", True, "https://github.com/google-antigravity"
         
     if any(kw in lower_name or kw in lower_email for kw in ["gpt", "openai", "chat", "codex"]):
-        return "Codex", "noreply@openai.com", "https://github.com/codex.png", True
+        return "Codex", "noreply@openai.com", "https://github.com/codex.png", True, "https://github.com/codex"
         
     if "devin" in lower_name or "devin" in lower_email:
-        return "Devin AI", "158243242+devin-ai-integration[bot]@users.noreply.github.com", "https://avatars.githubusercontent.com/u/158243242?v=4", True
+        return "Devin AI", "158243242+devin-ai-integration[bot]@users.noreply.github.com", "https://avatars.githubusercontent.com/u/158243242?v=4", True, "https://github.com/devin-ai-integration"
 
     # Check other unregistered AIs
     is_unregistered_ai = any(kw in lower_name or kw in lower_email for kw in UNREGISTERED_AI_KEYWORDS)
     if is_unregistered_ai:
-        return "Other AI Assistant", "noreply@ai.com", "logo-generic", False
+        return "Other AI Assistant", "noreply@ai.com", "logo-generic", False, "#"
         
     # Standard human/bot contributor
-    return name, email, "generic-dev", True
+    return name, email, "generic-dev", True, f"https://github.com/{name}"
 
 def main():
     # Determine the directories to scan
@@ -241,7 +248,8 @@ def main():
         "commits": 0,
         "additions": 0,
         "deletions": 0,
-        "history": defaultdict(int)
+        "history": defaultdict(int),
+        "daily_history": defaultdict(int)
     })
     
     print(f"\nProcessing {len(found_repos)} repositories...")
@@ -256,6 +264,8 @@ def main():
             combined_data[contributor]["deletions"] += stats["deletions"]
             for week, count in stats["history"].items():
                 combined_data[contributor]["history"][week] += count
+            for day, count in stats["daily_history"].items():
+                combined_data[contributor]["daily_history"][day] += count
                 
     # Group contributors (combining Claude models, Gemini models, etc.)
     grouped_contributors = {}
@@ -265,7 +275,7 @@ def main():
         if norm is None:
             continue
             
-        norm_name, norm_email, avatar_url, is_registered = norm
+        norm_name, norm_email, avatar_url, is_registered, profile_url = norm
         
         if norm_name not in grouped_contributors:
             grouped_contributors[norm_name] = {
@@ -276,7 +286,9 @@ def main():
                 "deletions": 0,
                 "avatar_url": avatar_url,
                 "is_registered": is_registered,
-                "history": defaultdict(int)
+                "profile_url": profile_url,
+                "history": defaultdict(int),
+                "daily_history": defaultdict(int)
             }
             
         group = grouped_contributors[norm_name]
@@ -285,11 +297,14 @@ def main():
         group["deletions"] += stats["deletions"]
         for week, count in stats["history"].items():
             group["history"][week] += count
+        for day, count in stats["daily_history"].items():
+            group["daily_history"][day] += count
             
     # Format grouped contributors
     processed_contributors = []
     for norm_name, group in grouped_contributors.items():
         history_sorted = [{"week": w, "commits": c} for w, c in sorted(group["history"].items())]
+        daily_history_sorted = [{"day": d, "commits": c} for d, c in sorted(group["daily_history"].items())]
         processed_contributors.append({
             "name": group["name"],
             "email": group["email"],
@@ -298,7 +313,9 @@ def main():
             "deletions": group["deletions"],
             "avatar_url": group["avatar_url"],
             "is_registered": group["is_registered"],
-            "history": history_sorted
+            "profile_url": group["profile_url"],
+            "history": history_sorted,
+            "daily_history": daily_history_sorted
         })
         
     # Sort contributors: your account always stays at #1, others are ranked by commits descending

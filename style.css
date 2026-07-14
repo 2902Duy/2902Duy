@@ -585,6 +585,13 @@ h2::after {
   display: flex;
   align-items: center;
   gap: var(--spacing-sm);
+  text-decoration: none;
+  color: inherit;
+  transition: color 0.2s ease;
+}
+
+.contributor-profile:hover .contributor-name {
+  color: var(--accent-cyan);
 }
 
 .contributor-avatar {
