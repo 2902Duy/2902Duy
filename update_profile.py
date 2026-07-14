@@ -11,15 +11,37 @@ try:
 except AttributeError:
     pass  # Fallback for Python versions < 3.7
 
+# List of your names and emails to identify your commits
+USER_SIGNATURES = [
+    '2902duy', 
+    'duy2902', 
+    'dyu2902', 
+    'dyu', 
+    'dqhfit',
+    'tduy29.2k4@gmail.com', 
+    '100993366+2902duy@users.noreply.github.com',
+    'dqhf.it@gmail.com'
+]
+
+def is_user_author(author_name, author_email):
+    """
+    Checks if the commit author matches one of your user signatures.
+    """
+    name = author_name.lower()
+    email = author_email.lower()
+    return any(sig in name or sig in email for sig in USER_SIGNATURES)
+
 def get_git_coauthors(repo_path):
     """
-    Runs git log in the specified repository path to extract all Co-authored-by lines.
+    Runs git log to extract Co-authored-by lines from commits authored by you.
     """
     coauthors = []
     try:
-        # Run git log to output all commit messages
+        # Run git log, printing author details and the body of the commit
+        # Format: HASH|AuthorName|AuthorEmail
+        # Followed by body, separated by ---COMMIT_END---
         result = subprocess.run(
-            ['git', 'log', '--all', '--pretty=format:%B'],
+            ['git', 'log', '--all', '--pretty=format:%H|%an|%ae%n%B%n---COMMIT_END---'],
             cwd=repo_path,
             capture_output=True,
             text=True,
@@ -29,16 +51,37 @@ def get_git_coauthors(repo_path):
         if result.returncode != 0:
             return coauthors
 
-        # Regular expression to extract Co-authored-by lines
-        # Format: Co-authored-by: Name <email>
-        pattern = re.compile(r'(?i)Co-authored-by:\s*([^<]+)\s*<([^>]+)>')
+        coauthor_pattern = re.compile(r'(?i)Co-authored-by:\s*([^<]+)\s*<([^>]+)>')
+        commits = result.stdout.split('---COMMIT_END---')
         
-        for line in result.stdout.splitlines():
-            match = pattern.search(line)
-            if match:
-                name = match.group(1).strip()
-                email = match.group(2).strip()
-                coauthors.append((name, email))
+        for commit in commits:
+            commit = commit.strip()
+            if not commit:
+                continue
+            
+            lines = commit.splitlines()
+            if not lines:
+                continue
+                
+            # Parse the header line containing hash, author name, and author email
+            header = lines[0]
+            parts = header.split('|')
+            if len(parts) < 3:
+                continue
+                
+            author_name = parts[1].strip()
+            author_email = parts[2].strip()
+            
+            # Only count co-authors if YOU are the author of this commit
+            if is_user_author(author_name, author_email):
+                body = "\n".join(lines[1:])
+                for line in body.splitlines():
+                    match = coauthor_pattern.search(line)
+                    if match:
+                        co_name = match.group(1).strip()
+                        co_email = match.group(2).strip()
+                        coauthors.append((co_name, co_email))
+                        
     except Exception as e:
         print(f"Error scanning repo at {repo_path}: {e}")
     
@@ -90,16 +133,15 @@ def main():
         repo_name = os.path.basename(repo_path)
         repo_coauthors = get_git_coauthors(repo_path)
         if repo_coauthors:
-            print(f"- {repo_name}: Found {len(repo_coauthors)} co-authored commits")
+            print(f"- {repo_name}: Found {len(repo_coauthors)} co-authored commits by you")
             all_coauthors.extend(repo_coauthors)
                 
-    # Filter out the user's own commits/usernames
-    exclude_keywords = ['2902duy', 'duy2902', 'tduy29.2k4@gmail.com', 'dyu2902', 'dqhfit', 'toanvu']
+    # Filter out the user's own commits/usernames from the co-authors list
     filtered_coauthors = []
     for name, email in all_coauthors:
         lower_name = name.lower()
         lower_email = email.lower()
-        should_exclude = any(kw in lower_name or kw in lower_email for kw in exclude_keywords)
+        should_exclude = any(sig in lower_name or sig in lower_email for sig in USER_SIGNATURES)
         if not should_exclude:
             filtered_coauthors.append((name, email))
             
@@ -111,7 +153,7 @@ def main():
     
     # Generate markdown table
     if not sorted_coauthors:
-        markdown_table = "*No AI or external co-authors detected in project history yet.*"
+        markdown_table = "*No AI or external co-authors detected in your commits yet.*"
     else:
         markdown_table = "| Co-Author / AI Assistant | Commits | Email Alias |\n"
         markdown_table += "| :--- | :---: | :--- |\n"
@@ -119,7 +161,7 @@ def main():
             # Highlight AI assistant names nicely
             markdown_table += f"| **{name}** | {count} | `{email}` |\n"
             
-    print(f"\nGenerated Co-Author stats:\n{markdown_table}\n")
+    print(f"\nGenerated Co-Author stats (Only commits authored by you):\n{markdown_table}\n")
     
     # Update README.md
     if not os.path.exists(readme_path):
