@@ -46,27 +46,13 @@ Below is a dynamically generated table of the AI models and collaborators that h
 
 | Co-Author / AI Assistant | Commits | Email Alias |
 | :--- | :---: | :--- |
+| **Claude** | 195 | `noreply@anthropic.com` |
+| **ChatGPT** | 32 | `noreply@openai.com` |
+| **Antigravity** | 18 | `antigravity@google.com` |
 | **Devin AI** | 1 | `158243242+devin-ai-integration[bot]@users.noreply.github.com` |
 
 
 <!-- COAUTHORS:END -->
-
----
-
-### 📊 GitHub Statistics
-
-<p align="center">
-  <img src="https://github-readme-stats-anuraghazra.vercel.app/api?username=2902Duy&show_icons=true&theme=tokyonight&locale=en" alt="2902Duy's GitHub stats" height="190" />
-  <img src="https://github-readme-stats-anuraghazra.vercel.app/api/top-langs/?username=2902Duy&layout=compact&theme=tokyonight&locale=en" alt="2902Duy's top languages" height="190" />
-</p>
-
-<p align="center">
-  <img src="https://github-readme-streak-stats.herokuapp.com/?user=2902Duy&theme=tokyonight" alt="2902Duy's github streak" />
-</p>
-
-<p align="center">
-  <img src="https://github-readme-activity-graph.vercel.app/graph?username=2902Duy&theme=tokyonight" alt="2902Duy's git activity" />
-</p>
 
 ---
 
