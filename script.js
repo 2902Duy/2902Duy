@@ -4,7 +4,6 @@ document.addEventListener("DOMContentLoaded", () => {
   
   // DOM Elements
   const contributorsGrid = document.getElementById("contributors-grid");
-  const toggleRegistered = document.getElementById("toggle-registered");
   const rangeSlider = document.getElementById("range-slider");
   const sliderValLabel = document.getElementById("slider-val");
   const heatmapTitle = document.getElementById("heatmap-title");
@@ -14,7 +13,6 @@ document.addEventListener("DOMContentLoaded", () => {
   // Variables to hold loaded database
   let gitDB = null;
   let commitsChart = null;
-  let filterRegisteredOnly = false; // State of the toggle switch
   
   // Initialize
   fetchGitDatabase();
@@ -24,19 +22,10 @@ document.addEventListener("DOMContentLoaded", () => {
    * Setup Event Listeners for interactive elements
    */
   function setupEventListeners() {
-    // Toggle switch click event
-    toggleRegistered.addEventListener("click", () => {
-      filterRegisteredOnly = !filterRegisteredOnly;
-      toggleRegistered.classList.toggle("active", filterRegisteredOnly);
-      if (gitDB) {
-        renderContributors(gitDB.contributors);
-      }
-    });
-
     // Range slider input event
     rangeSlider.addEventListener("input", (e) => {
       const months = parseInt(e.target.value);
-      sliderValLabel.textContent = `${months} Month${months > 1 ? 's' : ''}`;
+      sliderValLabel.textContent = `${months} Tháng`;
       if (gitDB && commitsChart) {
         updateChartRange(months);
       }
@@ -80,18 +69,12 @@ document.addEventListener("DOMContentLoaded", () => {
   function renderContributors(contributors) {
     contributorsGrid.innerHTML = "";
     
-    // Filter if "Only registered accounts" toggle is active
-    let filtered = contributors;
-    if (filterRegisteredOnly) {
-      filtered = contributors.filter(c => c.is_registered);
-    }
-    
-    if (filtered.length === 0) {
-      contributorsGrid.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: var(--text-sub); padding: 2rem;">No matching contributors found.</div>`;
+    if (contributors.length === 0) {
+      contributorsGrid.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: var(--text-sub); padding: 2rem;">Không tìm thấy người đóng góp nào.</div>`;
       return;
     }
     
-    filtered.forEach((c, index) => {
+    contributors.forEach((c, index) => {
       const card = document.createElement("div");
       card.className = "contributor-card";
       
@@ -125,7 +108,7 @@ document.addEventListener("DOMContentLoaded", () => {
           <span class="contributor-rank">${rank}</span>
         </div>
         <div class="contributor-stats">
-          <div class="contributor-commits">${c.commits} commit${c.commits > 1 ? 's' : ''}</div>
+          <div class="contributor-commits">${c.commits} commit</div>
           <div class="contributor-diff">
             <span class="diff-add">${additionsFormatted} ++</span>
             <span class="diff-del">${deletionsFormatted} --</span>
@@ -192,7 +175,7 @@ document.addEventListener("DOMContentLoaded", () => {
       data: {
         labels: labels,
         datasets: [{
-          label: 'Commits',
+          label: 'Số commit',
           data: data,
           fill: true,
           backgroundColor: 'rgba(219, 39, 119, 0.1)', // Light pink glow fill
@@ -215,7 +198,7 @@ document.addEventListener("DOMContentLoaded", () => {
           legend: { display: false },
           title: {
             display: true,
-            text: "Dyu's Contribution Graph",
+            text: "Biểu đồ hoạt động commit của Duy",
             color: '#db2777',
             font: { family: 'Outfit', size: 16, weight: 'bold' },
             padding: { bottom: 10 }
@@ -326,7 +309,7 @@ document.addEventListener("DOMContentLoaded", () => {
     
     let totalCommitsInPeriod = 0;
     let currentMonth = -1;
-    const monthsArray = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    const monthsArray = ["Th1", "Th2", "Th3", "Th4", "Th5", "Th6", "Th7", "Th8", "Th9", "Th10", "Th11", "Th12"];
     
     // Track column index for month label placements
     let colIndex = 0;
@@ -359,13 +342,13 @@ document.addEventListener("DOMContentLoaded", () => {
       square.className = `calendar-square level-${level}`;
       
       // Tooltip formatting
-      const readableDate = currentDate.toLocaleDateString("en-US", {
-        weekday: "short",
-        month: "short",
+      const readableDate = currentDate.toLocaleDateString("vi-VN", {
+        weekday: "long",
         day: "numeric",
+        month: "long",
         year: "numeric"
       });
-      const tooltipText = `${commitsCount === 0 ? 'No' : commitsCount} commit${commitsCount !== 1 ? 's' : ''} on ${readableDate}`;
+      const tooltipText = `${commitsCount === 0 ? 'Không có' : commitsCount} commit vào ${readableDate}`;
       square.setAttribute("data-tooltip", tooltipText);
       
       calendarSquaresGrid.appendChild(square);
@@ -389,6 +372,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     
     // Update Title with computed commits
-    heatmapTitle.textContent = `${totalCommitsInPeriod.toLocaleString()} contributions in the last year`;
+    heatmapTitle.textContent = `${totalCommitsInPeriod.toLocaleString()} đóng góp trong ${selectedYear === 2026 ? 'năm qua' : 'năm ' + selectedYear}`;
   }
 });
