@@ -3,9 +3,9 @@
     {
       "name": "2902Duy",
       "email": "tduy29.2k4@gmail.com",
-      "commits": 528,
-      "additions": 229120,
-      "deletions": 74581,
+      "commits": 531,
+      "additions": 229129,
+      "deletions": 74608,
       "avatar_url": "https://github.com/2902Duy.png",
       "is_registered": true,
       "history": [
@@ -55,7 +55,7 @@
         },
         {
           "week": "2026-07-13",
-          "commits": 19
+          "commits": 22
         }
       ]
     },
@@ -91,7 +91,7 @@
       ]
     },
     {
-      "name": "ChatGPT",
+      "name": "Codex",
       "email": "noreply@openai.com",
       "commits": 32,
       "additions": 8564,
