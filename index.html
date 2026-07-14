@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Duy (2902Duy) | Portfolio & AI Collaborations</title>
+  <meta name="description" content="Personal portfolio and GitHub activity dashboard for Duy (2902Duy). Showcase of projects, real-time repository stats, and AI co-authorship tracker.">
+  
+  <!-- Preconnect and Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;700&family=Outfit:wght@400;500;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Background Glow Blobs -->
+  <div class="glow-blob blob-1" aria-hidden="true"></div>
+  <div class="glow-blob blob-2" aria-hidden="true"></div>
+
+  <!-- Header / Hero Section -->
+  <header class="container hero" id="hero">
+    <div class="hero-tagline">Hi there, I'm Duy 👋</div>
+    <h1>Building Code Alongside AI Assistants</h1>
+    <p class="hero-desc">
+      I am a software engineer focused on developing systems, training deep learning chess agents, and collaborating with advanced AI assistants to ship clean, performant code.
+    </p>
+    <div class="hero-actions">
+      <a href="#projects" class="btn btn-primary">Explore Projects</a>
+      <a href="https://github.com/2902Duy" target="_blank" rel="noopener noreferrer" class="btn btn-secondary">GitHub Profile</a>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="container">
+
+    <!-- Projects Section -->
+    <section class="section" id="projects">
+      <h2>Active Projects</h2>
+      <p style="color: var(--text-muted); margin-bottom: var(--spacing-lg); max-width: 600px;">
+        These are my latest active repositories fetched directly from GitHub in real-time.
+      </p>
+      
+      <!-- Grid showing repositories -->
+      <div class="grid-projects" id="projects-grid">
+        <!-- Skeleton loaders displayed while fetching -->
+        <div class="skeleton-card" aria-hidden="true"></div>
+        <div class="skeleton-card" aria-hidden="true"></div>
+        <div class="skeleton-card" aria-hidden="true"></div>
+        <div class="skeleton-card" aria-hidden="true"></div>
+        <div class="skeleton-card" aria-hidden="true"></div>
+        <div class="skeleton-card" aria-hidden="true"></div>
+      </div>
+    </section>
+
+    <!-- AI Collaborations Section -->
+    <section class="section" id="ai-collaborations">
+      <h2>AI Co-Authors & Collaborations</h2>
+      <p style="color: var(--text-muted); margin-bottom: var(--spacing-lg); max-width: 600px;">
+        Aggregated statistics of registered collaborators and bots that have co-authored commits in my projects, scanned directly from my Git logs.
+      </p>
+      
+      <div class="coauthors-wrapper" id="coauthors-list">
+        <!-- Javascript will populate the database table here -->
+        <div style="text-align: center; padding: 2rem;" aria-hidden="true">
+          <p style="color: var(--text-sub);">Loading co-authors statistics...</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- GitHub Stats Section -->
+    <section class="section" id="github-stats">
+      <h2>GitHub Statistics</h2>
+      <p style="color: var(--text-muted); margin-bottom: var(--spacing-lg); max-width: 600px;">
+        A visual overview of my overall contributions, language distribution, and commit streaks.
+      </p>
+      
+      <div class="stats-cards-wrapper">
+        <img class="stats-card-img" src="https://github-readme-stats-anuraghazra.vercel.app/api?username=2902Duy&show_icons=true&theme=tokyonight&locale=en" alt="GitHub Stats Overview" loading="lazy" />
+        <img class="stats-card-img" src="https://github-readme-stats-anuraghazra.vercel.app/api/top-langs/?username=2902Duy&layout=compact&theme=tokyonight&locale=en" alt="Top Languages Chart" loading="lazy" />
+        <img class="stats-card-img" style="grid-column: 1 / -1;" src="https://github-readme-streak-stats.herokuapp.com/?user=2902Duy&theme=tokyonight" alt="GitHub Streak Stats" loading="lazy" />
+        <img class="stats-card-img" style="grid-column: 1 / -1;" src="https://github-readme-activity-graph.vercel.app/graph?username=2902Duy&theme=tokyonight" alt="Weekly Commits Activity Graph" loading="lazy" />
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="container">
+    <p>&copy; 2026 Duy (2902Duy). Built with HTML5, CSS Variables, and Vanilla JavaScript.</p>
+    <p style="margin-top: 6px; font-size: 0.8rem;">Powered by Antigravity Agent 💚</p>
+  </footer>
+
+  <!-- Script -->
+  <script src="script.js"></script>
+</body>
+</html>

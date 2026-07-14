@@ -168,6 +168,20 @@ def main():
     # Sort by number of commits in descending order
     sorted_coauthors = sorted(counts.items(), key=lambda x: x[1], reverse=True)
     
+    # Write to coauthors.json as a local database for the frontend
+    import json
+    coauthors_json_path = os.path.join(script_dir, 'coauthors.json')
+    json_data = [
+        {"name": name, "commits": count, "email": email}
+        for (name, email), count in sorted_coauthors
+    ]
+    try:
+        with open(coauthors_json_path, 'w', encoding='utf-8') as f:
+            json.dump(json_data, f, indent=2, ensure_ascii=False)
+        print(f"Successfully wrote database to {coauthors_json_path}!")
+    except Exception as e:
+        print(f"Error writing coauthors.json: {e}")
+    
     # Generate markdown table
     if not sorted_coauthors:
         markdown_table = "*No registered external co-authors or bots detected in your commits yet.*"

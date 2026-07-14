@@ -1,0 +1,435 @@
+/* Custom Design System for Duy's Portfolio Website */
+
+/* 1. Tokens & Root Variables */
+:root {
+  /* Color Palette - Tokyo Night inspired */
+  --bg-primary: #0a0e17;
+  --bg-secondary: #131a2c;
+  --bg-card: rgba(30, 41, 59, 0.4);
+  --border-card: rgba(255, 255, 255, 0.08);
+  --text-main: #f8fafc;
+  --text-muted: #94a3b8;
+  --text-sub: #64748b;
+  
+  /* Accent Colors */
+  --accent-neon-green: #39ff14;
+  --accent-cyan: #06b6d4;
+  --accent-pink: #f43f5e;
+  --accent-glow-green: rgba(57, 255, 20, 0.15);
+  --accent-glow-cyan: rgba(6, 182, 212, 0.25);
+  
+  /* Typography */
+  --font-sans: 'Outfit', 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono: 'Fira Code', monospace;
+  
+  /* Layout & Spacing */
+  --spacing-xs: 0.25rem;  /* 4px */
+  --spacing-sm: 0.5rem;   /* 8px */
+  --spacing-md: 1rem;     /* 16px */
+  --spacing-lg: 1.5rem;   /* 24px */
+  --spacing-xl: 2.5rem;   /* 40px */
+  
+  /* Styling Defaults */
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+  --shadow-subtle: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+  --shadow-neon: 0 0 20px rgba(6, 182, 212, 0.3);
+  --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* 2. Global Resets & Setup */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: var(--bg-primary);
+  color: var(--text-main);
+  font-family: var(--font-sans);
+  line-height: 1.6;
+  overflow-x: hidden;
+  padding-bottom: var(--spacing-xl);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Background Glowing Blobs */
+.glow-blob {
+  position: absolute;
+  width: 400px;
+  height: 400px;
+  border-radius: 50%;
+  filter: blur(150px);
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0.3;
+}
+
+.blob-1 {
+  background-color: var(--accent-cyan);
+  top: 10%;
+  left: -100px;
+}
+
+.blob-2 {
+  background-color: var(--accent-neon-green);
+  top: 60%;
+  right: -100px;
+}
+
+/* 3. Typography Hierarchy */
+h1, h2, h3, h4 {
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+h1 {
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  margin-bottom: var(--spacing-sm);
+}
+
+h2 {
+  font-size: clamp(1.8rem, 3vw, 2.2rem);
+  margin-bottom: var(--spacing-md);
+  color: var(--text-main);
+  position: relative;
+  display: inline-block;
+}
+
+h2::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -6px;
+  width: 40px;
+  height: 3px;
+  background: linear-gradient(90deg, var(--accent-cyan), var(--accent-neon-green));
+  border-radius: 2px;
+}
+
+h3 {
+  font-size: 1.25rem;
+  margin-bottom: var(--spacing-xs);
+}
+
+/* 4. Layout Container */
+.container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 var(--spacing-lg);
+}
+
+/* 5. Header / Hero Section */
+.hero {
+  min-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: relative;
+}
+
+.hero-tagline {
+  font-family: var(--font-mono);
+  font-size: 1rem;
+  color: var(--accent-neon-green);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: var(--spacing-md);
+}
+
+.hero-desc {
+  font-size: clamp(1.1rem, 2vw, 1.3rem);
+  color: var(--text-muted);
+  max-width: 600px;
+  margin-bottom: var(--spacing-xl);
+}
+
+/* 6. Buttons & Interactions */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem var(--spacing-lg);
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  text-decoration: none;
+  transition: var(--transition-smooth);
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--accent-cyan), #0891b2);
+  color: var(--bg-primary);
+  border: none;
+  box-shadow: 0 4px 14px rgba(6, 182, 212, 0.4);
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(6, 182, 212, 0.6);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+}
+
+.btn-secondary {
+  background-color: transparent;
+  color: var(--text-main);
+  border: 1px solid var(--border-card);
+  margin-left: var(--spacing-md);
+}
+
+.btn-secondary:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+  border-color: var(--text-muted);
+}
+
+/* 7. Grid & Component Cards */
+.section {
+  padding: var(--spacing-xl) 0;
+}
+
+.grid-projects {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: var(--spacing-lg);
+}
+
+/* Glassmorphism Card Style */
+.card {
+  background-color: var(--bg-card);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--border-card);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-lg);
+  transition: var(--transition-smooth);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(6, 182, 212, 0.3);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3), 0 0 15px rgba(6, 182, 212, 0.1);
+}
+
+.card-title {
+  color: var(--text-main);
+  font-family: var(--font-mono);
+  margin-bottom: var(--spacing-sm);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.card-title svg {
+  color: var(--accent-cyan);
+}
+
+.card-desc {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  margin-bottom: var(--spacing-md);
+  flex-grow: 1;
+}
+
+.card-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.85rem;
+  color: var(--text-sub);
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  padding-top: var(--spacing-sm);
+}
+
+.card-lang {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.lang-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: var(--text-sub);
+}
+
+/* Language Colors */
+.lang-python { background-color: #3572A5; }
+.lang-javascript { background-color: #f1e05a; }
+.lang-html { background-color: #e34c26; }
+.lang-css { background-color: #563d7c; }
+.lang-csharp { background-color: #178600; }
+.lang-docker { background-color: #384d54; }
+
+.card-stats {
+  display: flex;
+  gap: var(--spacing-md);
+  align-items: center;
+}
+
+.card-stat-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.card-stat-item svg {
+  width: 14px;
+  height: 14px;
+}
+
+/* 8. AI Co-Author Table & Fallback Section */
+.coauthors-wrapper {
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-card);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-lg);
+  box-shadow: var(--shadow-subtle);
+}
+
+.coauthors-fallback {
+  text-align: center;
+  padding: var(--spacing-xl) var(--spacing-md);
+  color: var(--text-muted);
+}
+
+.coauthors-fallback svg {
+  color: var(--accent-cyan);
+  margin-bottom: var(--spacing-md);
+  opacity: 0.8;
+}
+
+.coauthor-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.coauthor-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacing-md);
+  background-color: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  border-radius: var(--radius-sm);
+  transition: var(--transition-smooth);
+}
+
+.coauthor-item:hover {
+  background-color: rgba(6, 182, 212, 0.03);
+  border-color: rgba(6, 182, 212, 0.1);
+}
+
+.coauthor-info {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
+.coauthor-avatar-fallback {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent-cyan), var(--accent-neon-green));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  color: var(--bg-primary);
+}
+
+.coauthor-name {
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+.coauthor-email {
+  font-size: 0.85rem;
+  color: var(--text-sub);
+  font-family: var(--font-mono);
+}
+
+.coauthor-commits {
+  font-family: var(--font-mono);
+  font-size: 1.1rem;
+  color: var(--accent-neon-green);
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.coauthor-commits span {
+  font-size: 0.8rem;
+  color: var(--text-sub);
+  font-weight: 400;
+}
+
+/* 9. GitHub Stats Display */
+.stats-cards-wrapper {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--spacing-lg);
+  align-items: center;
+}
+
+@media (min-width: 768px) {
+  .stats-cards-wrapper {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.stats-card-img {
+  width: 100%;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-card);
+  background-color: var(--bg-secondary);
+  padding: var(--spacing-sm);
+  display: block;
+}
+
+/* 10. Footer styling */
+footer {
+  border-top: 1px solid var(--border-card);
+  padding-top: var(--spacing-xl);
+  margin-top: var(--spacing-xl);
+  text-align: center;
+  font-size: 0.9rem;
+  color: var(--text-sub);
+}
+
+/* 11. Loading Skeletons */
+.skeleton-card {
+  height: 200px;
+  background: linear-gradient(90deg, var(--bg-card) 25%, rgba(255, 255, 255, 0.05) 50%, var(--bg-card) 75%);
+  background-size: 200% 100%;
+  animation: skeleton-loading 1.5s infinite;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-card);
+}
+
+@keyframes skeleton-loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* Keyboard accessibility support */
+*:focus-visible {
+  outline: 2px solid var(--accent-cyan);
+  outline-offset: 4px;
+}
