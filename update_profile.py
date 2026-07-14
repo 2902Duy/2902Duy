@@ -1,7 +1,15 @@
 import os
 import re
 import subprocess
+import sys
 from collections import Counter
+
+# Force stdout and stderr to use UTF-8 to prevent Windows terminal encoding crashes
+try:
+    sys.stdout.reconfigure(encoding='utf-8')
+    sys.stderr.reconfigure(encoding='utf-8')
+except AttributeError:
+    pass  # Fallback for Python versions < 3.7
 
 def get_git_coauthors(repo_path):
     """
@@ -36,30 +44,57 @@ def get_git_coauthors(repo_path):
     
     return coauthors
 
+def find_git_repos(root_dir):
+    """
+    Recursively finds all Git repositories under root_dir.
+    """
+    repos = []
+    if not os.path.exists(root_dir):
+        return repos
+        
+    try:
+        for root, dirs, files in os.walk(root_dir):
+            if '.git' in dirs:
+                repos.append(root)
+                # Don't descend further into this git repo's subfolders
+                dirs.remove('.git')
+    except Exception as e:
+        print(f"Error scanning directory {root_dir}: {e}")
+        
+    return repos
+
 def main():
-    # Determine the directory where this script is located
+    # Determine the directories to scan
     script_dir = os.path.dirname(os.path.abspath(__file__))
     readme_path = os.path.join(script_dir, 'README.md')
     
-    # We want to scan the parent directory c:\Program_user
-    parent_dir = os.path.dirname(script_dir)
-    print(f"Scanning parent directory: {parent_dir}")
+    # We will scan c:\Program_user and C:\Users\<user>\OneDrive
+    scan_dirs = [
+        os.path.dirname(script_dir),  # c:\Program_user
+        os.path.join(os.path.expanduser("~"), "OneDrive")  # OneDrive folder
+    ]
     
     all_coauthors = []
     
-    # Scan subdirectories for git repositories
-    for item in os.listdir(parent_dir):
-        item_path = os.path.join(parent_dir, item)
-        if os.path.isdir(item_path):
-            git_path = os.path.join(item_path, '.git')
-            if os.path.exists(git_path) and os.path.isdir(git_path):
-                print(f"Found git repository: {item}")
-                repo_coauthors = get_git_coauthors(item_path)
-                print(f"-> Extracted {len(repo_coauthors)} co-author lines")
-                all_coauthors.extend(repo_coauthors)
+    print("Scanning directories for Git repositories...")
+    found_repos = []
+    for d in scan_dirs:
+        if os.path.exists(d):
+            print(f"Scanning: {d}")
+            repos = find_git_repos(d)
+            print(f"-> Found {len(repos)} Git repos in {d}")
+            found_repos.extend(repos)
+            
+    print(f"\nProcessing {len(found_repos)} repositories...")
+    for repo_path in found_repos:
+        repo_name = os.path.basename(repo_path)
+        repo_coauthors = get_git_coauthors(repo_path)
+        if repo_coauthors:
+            print(f"- {repo_name}: Found {len(repo_coauthors)} co-authored commits")
+            all_coauthors.extend(repo_coauthors)
                 
     # Filter out the user's own commits/usernames
-    exclude_keywords = ['2902duy', 'duy2902', 'tduy29.2k4@gmail.com']
+    exclude_keywords = ['2902duy', 'duy2902', 'tduy29.2k4@gmail.com', 'dyu2902', 'dqhfit', 'toanvu']
     filtered_coauthors = []
     for name, email in all_coauthors:
         lower_name = name.lower()
