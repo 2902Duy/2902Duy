@@ -61,7 +61,7 @@ document.addEventListener("DOMContentLoaded", () => {
    */
   async function fetchGitDatabase() {
     try {
-      const response = await fetch("./git_db.json");
+      const response = await fetch(`./git_db.json?t=${Date.now()}`);
       if (!response.ok) throw new Error("Database error");
       gitDB = await response.json();
       
@@ -303,8 +303,8 @@ document.addEventListener("DOMContentLoaded", () => {
     if (selectedYear === 2026) {
       // Show rolling last 1 year starting from 365 days ago
       endDate = new Date();
-      startDate = new Date();
-      startDate.setDate(endDate.getDate() - 365);
+      startDate = new Date(endDate);
+      startDate.setFullYear(endDate.getFullYear() - 1);
     } else {
       // Show calendar for the specific calendar year (e.g. Jan 1 to Dec 31)
       startDate = new Date(selectedYear, 0, 1);
@@ -330,11 +330,17 @@ document.addEventListener("DOMContentLoaded", () => {
     // Track column index for month label placements
     let colIndex = 0;
     
+    // Initialize currentDate at the start of day (local time)
+    let currentDate = new Date(startDate);
+    currentDate.setHours(0, 0, 0, 0);
+    
     for (let i = 0; i < totalDays; i++) {
-      const currentDate = new Date(startDate);
-      currentDate.setDate(startDate.getDate() + i);
+      // Get exact YYYY-MM-DD in local time
+      const year = currentDate.getFullYear();
+      const month = String(currentDate.getMonth() + 1).padStart(2, '0');
+      const day = String(currentDate.getDate()).padStart(2, '0');
+      const dateStr = `${year}-${month}-${day}`;
       
-      const dateStr = currentDate.toISOString().split("T")[0];
       const commitsCount = commitMap[dateStr] || 0;
       totalCommitsInPeriod += commitsCount;
       
@@ -376,6 +382,9 @@ document.addEventListener("DOMContentLoaded", () => {
         }
         colIndex++;
       }
+      
+      // Increment by exactly 1 day locally
+      currentDate.setDate(currentDate.getDate() + 1);
     }
     
     // Update Title with computed commits
