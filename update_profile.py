@@ -4,6 +4,7 @@ import subprocess
 import sys
 import json
 import datetime
+import urllib.request
 from collections import Counter, defaultdict
 
 # Force stdout and stderr to use UTF-8 to prevent Windows terminal encoding crashes
@@ -223,6 +224,47 @@ def normalize_contributor(name, email):
     # Standard human/bot contributor
     return name, email, "generic-dev", True, f"https://github.com/{name}"
 
+def get_github_contributions(username):
+    """
+    Scrapes the public GitHub contribution calendar for the given username
+    across the years 2022 to 2026.
+    """
+    print(f"\nScraping public GitHub contributions for {username}...")
+    all_commits = {}
+    years = [2022, 2023, 2024, 2025, 2026]
+    for year in years:
+        url = f"https://github.com/users/{username}/contributions?from={year}-01-01&to={year}-12-31"
+        req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
+        try:
+            with urllib.request.urlopen(req, timeout=10) as response:
+                html = response.read().decode('utf-8')
+                
+                # Extract data-date and id
+                days = re.findall(r'data-date="([^"]+)"[^>]*id="([^"]+)"', html)
+                day_map = {day_id: date for date, day_id in days}
+                
+                # Extract tooltips
+                tooltips = re.findall(r'for="([^"]+)"[^>]*>([^<]+)</tool-tip>', html)
+                
+                year_commits = 0
+                for day_id, text in tooltips:
+                    if day_id in day_map:
+                        date = day_map[day_id]
+                        text_lower = text.lower().strip()
+                        if 'no contribution' in text_lower:
+                            cnt = 0
+                        else:
+                            m = re.match(r'(\d+)\s+contribution', text_lower)
+                            cnt = int(m.group(1)) if m else 0
+                        if cnt > 0:
+                            all_commits[date] = cnt
+                            year_commits += cnt
+                print(f"-> Year {year}: found {year_commits} commits")
+        except Exception as e:
+            print(f"Error scraping contributions for {year}: {e}")
+            
+    return all_commits
+
 def main():
     # Determine the directories to scan
     script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -320,6 +362,33 @@ def main():
         
     # Sort contributors: your account always stays at #1, others are ranked by commits descending
     user_contributor = [c for c in processed_contributors if c["name"] == "2902Duy"]
+    
+    if user_contributor:
+        user_c = user_contributor[0]
+        gh_contributions = get_github_contributions("2902Duy")
+        
+        # Merge daily history using max to avoid double-counting
+        local_daily = {item["day"]: item["commits"] for item in user_c["daily_history"]}
+        for day, commits in gh_contributions.items():
+            local_daily[day] = max(local_daily.get(day, 0), commits)
+            
+        user_c["daily_history"] = [{"day": d, "commits": c} for d, c in sorted(local_daily.items())]
+        
+        # Recompute total commits count based on sum of daily commits
+        user_c["commits"] = sum(local_daily.values())
+        
+        # Recompute weekly history based on daily history
+        weekly_history = defaultdict(int)
+        for day, commits in local_daily.items():
+            try:
+                dt = datetime.datetime.strptime(day, "%Y-%m-%d").date()
+                monday = dt - datetime.timedelta(days=dt.weekday())
+                week_start = monday.strftime("%Y-%m-%d")
+                weekly_history[week_start] += commits
+            except ValueError:
+                pass
+            
+        user_c["history"] = [{"week": w, "commits": c} for w, c in sorted(weekly_history.items())]
     others = [c for c in processed_contributors if c["name"] != "2902Duy"]
     others_sorted = sorted(others, key=lambda x: x["commits"], reverse=True)
     
