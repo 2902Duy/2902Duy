@@ -1,0 +1,385 @@
+{
+  "contributors": [
+    {
+      "name": "2902Duy",
+      "email": "tduy29.2k4@gmail.com",
+      "commits": 521,
+      "additions": 227798,
+      "deletions": 73781,
+      "avatar_url": "https://github.com/2902Duy.png",
+      "is_registered": true,
+      "history": [
+        {
+          "week": "2026-04-20",
+          "commits": 11
+        },
+        {
+          "week": "2026-04-27",
+          "commits": 13
+        },
+        {
+          "week": "2026-05-04",
+          "commits": 1
+        },
+        {
+          "week": "2026-05-11",
+          "commits": 17
+        },
+        {
+          "week": "2026-05-18",
+          "commits": 20
+        },
+        {
+          "week": "2026-05-25",
+          "commits": 13
+        },
+        {
+          "week": "2026-06-08",
+          "commits": 14
+        },
+        {
+          "week": "2026-06-15",
+          "commits": 39
+        },
+        {
+          "week": "2026-06-22",
+          "commits": 108
+        },
+        {
+          "week": "2026-06-29",
+          "commits": 126
+        },
+        {
+          "week": "2026-07-06",
+          "commits": 147
+        },
+        {
+          "week": "2026-07-13",
+          "commits": 12
+        }
+      ]
+    },
+    {
+      "name": "Claude Fable 5",
+      "email": "noreply@anthropic.com",
+      "commits": 85,
+      "additions": 17872,
+      "deletions": 2201,
+      "avatar_url": "logo-claude",
+      "is_registered": false,
+      "history": [
+        {
+          "week": "2026-06-29",
+          "commits": 32
+        },
+        {
+          "week": "2026-07-06",
+          "commits": 53
+        }
+      ]
+    },
+    {
+      "name": "Claude Opus 4.8 (1M context)",
+      "email": "noreply@anthropic.com",
+      "commits": 46,
+      "additions": 9051,
+      "deletions": 480,
+      "avatar_url": "logo-claude",
+      "is_registered": false,
+      "history": [
+        {
+          "week": "2026-06-29",
+          "commits": 28
+        },
+        {
+          "week": "2026-07-06",
+          "commits": 16
+        },
+        {
+          "week": "2026-07-13",
+          "commits": 2
+        }
+      ]
+    },
+    {
+      "name": "Claude Sonnet 4.6",
+      "email": "noreply@anthropic.com",
+      "commits": 33,
+      "additions": 6944,
+      "deletions": 5141,
+      "avatar_url": "logo-claude",
+      "is_registered": false,
+      "history": [
+        {
+          "week": "2026-06-15",
+          "commits": 3
+        },
+        {
+          "week": "2026-06-22",
+          "commits": 22
+        },
+        {
+          "week": "2026-06-29",
+          "commits": 8
+        }
+      ]
+    },
+    {
+      "name": "Claude",
+      "email": "noreply@anthropic.com",
+      "commits": 21,
+      "additions": 6689,
+      "deletions": 579,
+      "avatar_url": "logo-claude",
+      "is_registered": false,
+      "history": [
+        {
+          "week": "2026-06-15",
+          "commits": 6
+        },
+        {
+          "week": "2026-06-22",
+          "commits": 7
+        },
+        {
+          "week": "2026-06-29",
+          "commits": 8
+        }
+      ]
+    },
+    {
+      "name": "Codex",
+      "email": "codex@openai.com",
+      "commits": 11,
+      "additions": 2381,
+      "deletions": 332,
+      "avatar_url": "logo-chatgpt",
+      "is_registered": false,
+      "history": [
+        {
+          "week": "2026-06-15",
+          "commits": 1
+        },
+        {
+          "week": "2026-06-29",
+          "commits": 10
+        }
+      ]
+    },
+    {
+      "name": "GPT-5 Codex",
+      "email": "noreply@openai.com",
+      "commits": 10,
+      "additions": 2090,
+      "deletions": 309,
+      "avatar_url": "logo-chatgpt",
+      "is_registered": false,
+      "history": [
+        {
+          "week": "2026-06-29",
+          "commits": 4
+        },
+        {
+          "week": "2026-07-06",
+          "commits": 5
+        },
+        {
+          "week": "2026-07-13",
+          "commits": 1
+        }
+      ]
+    },
+    {
+      "name": "Claude Opus 4.8",
+      "email": "noreply@anthropic.com",
+      "commits": 9,
+      "additions": 862,
+      "deletions": 66,
+      "avatar_url": "logo-claude",
+      "is_registered": false,
+      "history": [
+        {
+          "week": "2026-06-15",
+          "commits": 2
+        },
+        {
+          "week": "2026-06-22",
+          "commits": 1
+        },
+        {
+          "week": "2026-07-06",
+          "commits": 6
+        }
+      ]
+    },
+    {
+      "name": "Antigravity",
+      "email": "gemini-1.5-pro",
+      "commits": 8,
+      "additions": 1094,
+      "deletions": 568,
+      "avatar_url": "logo-gemini",
+      "is_registered": false,
+      "history": [
+        {
+          "week": "2026-06-22",
+          "commits": 8
+        }
+      ]
+    },
+    {
+      "name": "GPT-5 Codex",
+      "email": "codex@openai.com",
+      "commits": 7,
+      "additions": 3782,
+      "deletions": 278,
+      "avatar_url": "logo-chatgpt",
+      "is_registered": false,
+      "history": [
+        {
+          "week": "2026-06-15",
+          "commits": 6
+        },
+        {
+          "week": "2026-06-22",
+          "commits": 1
+        }
+      ]
+    },
+    {
+      "name": "Antigravity",
+      "email": "gemini-3.5-flash",
+      "commits": 4,
+      "additions": 818,
+      "deletions": 434,
+      "avatar_url": "logo-gemini",
+      "is_registered": false,
+      "history": [
+        {
+          "week": "2026-06-22",
+          "commits": 4
+        }
+      ]
+    },
+    {
+      "name": "Antigravity",
+      "email": "gemini-2.5-pro",
+      "commits": 4,
+      "additions": 1924,
+      "deletions": 720,
+      "avatar_url": "logo-gemini",
+      "is_registered": false,
+      "history": [
+        {
+          "week": "2026-06-22",
+          "commits": 4
+        }
+      ]
+    },
+    {
+      "name": "Codex GPT-5",
+      "email": "codex@openai.com",
+      "commits": 2,
+      "additions": 10,
+      "deletions": 4,
+      "avatar_url": "logo-chatgpt",
+      "is_registered": false,
+      "history": [
+        {
+          "week": "2026-06-15",
+          "commits": 2
+        }
+      ]
+    },
+    {
+      "name": "Gemini 1.5 Pro",
+      "email": "noreply@google.com",
+      "commits": 1,
+      "additions": 127,
+      "deletions": 0,
+      "avatar_url": "logo-gemini",
+      "is_registered": false,
+      "history": [
+        {
+          "week": "2026-07-13",
+          "commits": 1
+        }
+      ]
+    },
+    {
+      "name": "Devin AI",
+      "email": "158243242+devin-ai-integration[bot]@users.noreply.github.com",
+      "commits": 1,
+      "additions": 2044,
+      "deletions": 475,
+      "avatar_url": "https://avatars.githubusercontent.com/u/158243242?v=4",
+      "is_registered": true,
+      "history": [
+        {
+          "week": "2026-05-18",
+          "commits": 1
+        }
+      ]
+    },
+    {
+      "name": "Antigravity",
+      "email": "antigravity@google.com",
+      "commits": 1,
+      "additions": 2004,
+      "deletions": 640,
+      "avatar_url": "logo-gemini",
+      "is_registered": false,
+      "history": [
+        {
+          "week": "2026-06-22",
+          "commits": 1
+        }
+      ]
+    },
+    {
+      "name": "Codex",
+      "email": "codex@gpt-5",
+      "commits": 1,
+      "additions": 250,
+      "deletions": 0,
+      "avatar_url": "logo-chatgpt",
+      "is_registered": false,
+      "history": [
+        {
+          "week": "2026-06-22",
+          "commits": 1
+        }
+      ]
+    },
+    {
+      "name": "Claude (Opus 4.8)",
+      "email": "noreply@anthropic.com",
+      "commits": 1,
+      "additions": 206,
+      "deletions": 22,
+      "avatar_url": "logo-claude",
+      "is_registered": false,
+      "history": [
+        {
+          "week": "2026-06-22",
+          "commits": 1
+        }
+      ]
+    },
+    {
+      "name": "OpenAI Codex",
+      "email": "noreply@openai.com",
+      "commits": 1,
+      "additions": 51,
+      "deletions": 28,
+      "avatar_url": "logo-chatgpt",
+      "is_registered": false,
+      "history": [
+        {
+          "week": "2026-06-22",
+          "commits": 1
+        }
+      ]
+    }
+  ]
+}

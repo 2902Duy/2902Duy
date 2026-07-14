@@ -11,6 +11,9 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;700&family=Outfit:wght@400;500;700;800&display=swap" rel="stylesheet">
   
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  
   <!-- Stylesheet -->
   <link rel="stylesheet" href="style.css">
 </head>
@@ -28,7 +31,7 @@
       I am a software engineer focused on developing systems, training deep learning chess agents, and collaborating with advanced AI assistants to ship clean, performant code.
     </p>
     <div class="hero-actions">
-      <a href="#projects" class="btn btn-primary">Explore Projects</a>
+      <a href="#commits-section" class="btn btn-primary">Explore Stats</a>
       <a href="https://github.com/2902Duy" target="_blank" rel="noopener noreferrer" class="btn btn-secondary">GitHub Profile</a>
     </div>
   </header>
@@ -36,52 +39,82 @@
   <!-- Main Content -->
   <main class="container">
 
-    <!-- Projects Section -->
-    <section class="section" id="projects">
-      <h2>Active Projects</h2>
+    <!-- Interactive Commits Chart Section -->
+    <section class="section" id="commits-section">
+      <h2>Hoạt Động Commit Theo Thời Gian</h2>
       <p style="color: var(--text-muted); margin-bottom: var(--spacing-lg); max-width: 600px;">
-        These are my latest active repositories fetched directly from GitHub in real-time.
+        Số lượng commit tích lũy của bạn được hiển thị theo thời gian. Sử dụng thanh trượt bên dưới để tùy chọn thay đổi khoảng thời gian lọc (từ 1 đến 12 tháng).
       </p>
       
-      <!-- Grid showing repositories -->
-      <div class="grid-projects" id="projects-grid">
-        <!-- Skeleton loaders displayed while fetching -->
-        <div class="skeleton-card" aria-hidden="true"></div>
-        <div class="skeleton-card" aria-hidden="true"></div>
-        <div class="skeleton-card" aria-hidden="true"></div>
-        <div class="skeleton-card" aria-hidden="true"></div>
-        <div class="skeleton-card" aria-hidden="true"></div>
-        <div class="skeleton-card" aria-hidden="true"></div>
-      </div>
-    </section>
-
-    <!-- AI Collaborations Section -->
-    <section class="section" id="ai-collaborations">
-      <h2>AI Co-Authors & Collaborations</h2>
-      <p style="color: var(--text-muted); margin-bottom: var(--spacing-lg); max-width: 600px;">
-        Aggregated statistics of registered collaborators and bots that have co-authored commits in my projects, scanned directly from my Git logs.
-      </p>
-      
-      <div class="coauthors-wrapper" id="coauthors-list">
-        <!-- Javascript will populate the database table here -->
-        <div style="text-align: center; padding: 2rem;" aria-hidden="true">
-          <p style="color: var(--text-sub);">Loading co-authors statistics...</p>
+      <div class="chart-container-wrapper">
+        <div class="chart-container" style="position: relative; height: 300px; width: 100%;">
+          <canvas id="commits-chart-canvas"></canvas>
+        </div>
+        
+        <!-- Range Slider Control -->
+        <div class="slider-container">
+          <div class="slider-header">
+            <span>Thời gian lọc (Range)</span>
+            <span id="slider-val">3 Months</span>
+          </div>
+          <input type="range" id="range-slider" class="slider-input" min="1" max="12" value="3" aria-label="Adjust chart date range in months" />
         </div>
       </div>
     </section>
 
-    <!-- GitHub Stats Section -->
-    <section class="section" id="github-stats">
-      <h2>GitHub Statistics</h2>
+    <!-- AI Collaborations / Contributors Grid -->
+    <section class="section" id="contributors-section">
+      <div class="controls-header">
+        <h2>Bảng Xếp Hạng Đóng Góp (Contributors)</h2>
+        
+        <!-- iOS Style Toggle Switch -->
+        <div class="toggle-wrapper" id="toggle-registered" role="checkbox" aria-checked="false" tabindex="0" aria-label="Toggle to show only registered GitHub accounts">
+          <span class="toggle-label">Chỉ hiện tài khoản đã đăng ký</span>
+          <div class="toggle-switch">
+            <div class="toggle-knob"></div>
+          </div>
+        </div>
+      </div>
+      
       <p style="color: var(--text-muted); margin-bottom: var(--spacing-lg); max-width: 600px;">
-        A visual overview of my overall contributions, language distribution, and commit streaks.
+        Danh sách xếp hạng của bạn và các AI co-author dựa trên tổng số commit. Thống kê chi tiết số commit, số dòng code thêm (+), bớt (-) và biểu đồ hoạt động mini.
+      </p>
+      
+      <!-- Contributor Cards Grid -->
+      <div class="grid-contributors" id="contributors-grid">
+        <!-- Skeleton loaders -->
+        <div class="skeleton-card" style="height: 120px;" aria-hidden="true"></div>
+        <div class="skeleton-card" style="height: 120px;" aria-hidden="true"></div>
+        <div class="skeleton-card" style="height: 120px;" aria-hidden="true"></div>
+      </div>
+    </section>
+
+    <!-- Projects Section -->
+    <section class="section" id="projects">
+      <h2>Dự Án Đang Hoạt Động (Live Repositories)</h2>
+      <p style="color: var(--text-muted); margin-bottom: var(--spacing-lg); max-width: 600px;">
+        Các kho lưu trữ công khai của bạn được đồng bộ trực tiếp từ GitHub theo thời gian hoạt động gần nhất.
+      </p>
+      
+      <div class="grid-projects" id="projects-grid">
+        <!-- Skeleton loaders -->
+        <div class="skeleton-card" aria-hidden="true"></div>
+        <div class="skeleton-card" aria-hidden="true"></div>
+        <div class="skeleton-card" aria-hidden="true"></div>
+      </div>
+    </section>
+
+    <!-- Static GitHub Stats Section -->
+    <section class="section" id="github-stats">
+      <h2>Tổng Quan Đóng Góp & Streaks</h2>
+      <p style="color: var(--text-muted); margin-bottom: var(--spacing-lg); max-width: 600px;">
+        Thống kê tổng hợp số lượng đóng góp và các thông số đo lường năng suất code của bạn trên GitHub.
       </p>
       
       <div class="stats-cards-wrapper">
         <img class="stats-card-img" src="https://github-readme-stats-anuraghazra.vercel.app/api?username=2902Duy&show_icons=true&theme=tokyonight&locale=en" alt="GitHub Stats Overview" loading="lazy" />
         <img class="stats-card-img" src="https://github-readme-stats-anuraghazra.vercel.app/api/top-langs/?username=2902Duy&layout=compact&theme=tokyonight&locale=en" alt="Top Languages Chart" loading="lazy" />
         <img class="stats-card-img" style="grid-column: 1 / -1;" src="https://github-readme-streak-stats.herokuapp.com/?user=2902Duy&theme=tokyonight" alt="GitHub Streak Stats" loading="lazy" />
-        <img class="stats-card-img" style="grid-column: 1 / -1;" src="https://github-readme-activity-graph.vercel.app/graph?username=2902Duy&theme=tokyonight" alt="Weekly Commits Activity Graph" loading="lazy" />
       </div>
     </section>
 
@@ -89,7 +122,7 @@
 
   <!-- Footer -->
   <footer class="container">
-    <p>&copy; 2026 Duy (2902Duy). Built with HTML5, CSS Variables, and Vanilla JavaScript.</p>
+    <p>&copy; 2026 Duy (2902Duy). Built with HTML5, CSS Variables, Chart.js and Vanilla JavaScript.</p>
     <p style="margin-top: 6px; font-size: 0.8rem;">Powered by Antigravity Agent 💚</p>
   </footer>
 

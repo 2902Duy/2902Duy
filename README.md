@@ -44,7 +44,10 @@ Below is a dynamically generated table of the AI models and collaborators that h
 
 <!-- COAUTHORS:START -->
 
-*No registered external co-authors or bots detected in your commits yet.*
+| Co-Author / AI Assistant | Commits | Email Alias |
+| :--- | :---: | :--- |
+| **Devin AI** | 1 | `158243242+devin-ai-integration[bot]@users.noreply.github.com` |
+
 
 <!-- COAUTHORS:END -->
 

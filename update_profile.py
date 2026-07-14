@@ -2,7 +2,9 @@ import os
 import re
 import subprocess
 import sys
-from collections import Counter
+import json
+import datetime
+from collections import Counter, defaultdict
 
 # Force stdout and stderr to use UTF-8 to prevent Windows terminal encoding crashes
 try:
@@ -42,17 +44,34 @@ def is_user_author(author_name, author_email):
     email = author_email.lower()
     return any(sig in name or sig in email for sig in USER_SIGNATURES)
 
-def get_git_coauthors(repo_path):
+def get_week_monday(timestamp):
     """
-    Runs git log to extract Co-authored-by lines from commits authored by you.
+    Given a timestamp, returns the string date of the Monday of that week (YYYY-MM-DD).
     """
-    coauthors = []
+    dt = datetime.date.fromtimestamp(float(timestamp))
+    monday = dt - datetime.timedelta(days=dt.weekday())
+    return monday.strftime('%Y-%m-%d')
+
+def parse_git_history(repo_path):
+    """
+    Runs git log --numstat to extract commit stats, co-authors, and additions/deletions.
+    """
+    contributors_data = defaultdict(lambda: {
+        "commits": 0,
+        "additions": 0,
+        "deletions": 0,
+        "history": defaultdict(int)
+    })
+    
     try:
-        # Run git log, printing author details and the body of the commit
-        # Format: HASH|AuthorName|AuthorEmail
-        # Followed by body, separated by ---COMMIT_END---
+        # Run git log with numstat to get file additions/deletions
+        # Output format:
+        # HASH|AuthorName|AuthorEmail|Timestamp
+        # Commit message...
+        # Co-authored-by...
+        # 14      0       .gitignore
         result = subprocess.run(
-            ['git', 'log', '--all', '--pretty=format:%H|%an|%ae%n%B%n---COMMIT_END---'],
+            ['git', 'log', '--all', '--numstat', '--pretty=format:COMMIT:%H|%an|%ae|%at%n%B'],
             cwd=repo_path,
             capture_output=True,
             text=True,
@@ -60,10 +79,12 @@ def get_git_coauthors(repo_path):
             errors='ignore'
         )
         if result.returncode != 0:
-            return coauthors
+            return contributors_data
 
         coauthor_pattern = re.compile(r'(?i)Co-authored-by:\s*([^<]+)\s*<([^>]+)>')
-        commits = result.stdout.split('---COMMIT_END---')
+        
+        # Split output by "COMMIT:" to process each commit
+        commits = result.stdout.split('COMMIT:')
         
         for commit in commits:
             commit = commit.strip()
@@ -74,29 +95,78 @@ def get_git_coauthors(repo_path):
             if not lines:
                 continue
                 
-            # Parse the header line containing hash, author name, and author email
             header = lines[0]
             parts = header.split('|')
-            if len(parts) < 3:
+            if len(parts) < 4:
                 continue
                 
             author_name = parts[1].strip()
             author_email = parts[2].strip()
+            timestamp = parts[3].strip()
             
-            # Only count co-authors if YOU are the author of this commit
-            if is_user_author(author_name, author_email):
-                body = "\n".join(lines[1:])
-                for line in body.splitlines():
-                    match = coauthor_pattern.search(line)
-                    if match:
-                        co_name = match.group(1).strip()
-                        co_email = match.group(2).strip()
-                        coauthors.append((co_name, co_email))
-                        
+            # Find the week start (Monday)
+            week_start = get_week_monday(timestamp)
+            
+            # Identify co-authors in this commit's body
+            commit_coauthors = []
+            commit_additions = 0
+            commit_deletions = 0
+            
+            # Read commit message body and numstats
+            is_body = True
+            for line in lines[1:]:
+                line = line.strip()
+                if not line:
+                    continue
+                
+                # Check for co-author line
+                match = coauthor_pattern.search(line)
+                if match:
+                    co_name = match.group(1).strip()
+                    co_email = match.group(2).strip()
+                    commit_coauthors.append((co_name, co_email))
+                    continue
+                
+                # If we encounter a line starting with numbers or tab, it is a numstat
+                parts_stat = line.split()
+                if len(parts_stat) >= 2 and (parts_stat[0].isdigit() or parts_stat[0] == '-'):
+                    add = parts_stat[0]
+                    del_ = parts_stat[1]
+                    if add.isdigit():
+                        commit_additions += int(add)
+                    if del_.isdigit():
+                        commit_deletions += int(del_)
+            
+            # Check if this commit belongs to you (either as author, or as co-author)
+            belongs_to_user = is_user_author(author_name, author_email)
+            if not belongs_to_user:
+                # Check if you are a co-author in this commit
+                for name, email in commit_coauthors:
+                    if is_user_author(name, email):
+                        belongs_to_user = True
+                        break
+            
+            # We ONLY process commits that belong to you (where you are author or co-author)
+            if belongs_to_user:
+                # 1. Attribute stats to the author
+                author_key = (author_name, author_email)
+                contributors_data[author_key]["commits"] += 1
+                contributors_data[author_key]["additions"] += commit_additions
+                contributors_data[author_key]["deletions"] += commit_deletions
+                contributors_data[author_key]["history"][week_start] += 1
+                
+                # 2. Attribute stats to all co-authors
+                for co_name, co_email in commit_coauthors:
+                    co_key = (co_name, co_email)
+                    contributors_data[co_key]["commits"] += 1
+                    contributors_data[co_key]["additions"] += commit_additions
+                    contributors_data[co_key]["deletions"] += commit_deletions
+                    contributors_data[co_key]["history"][week_start] += 1
+                    
     except Exception as e:
         print(f"Error scanning repo at {repo_path}: {e}")
     
-    return coauthors
+    return contributors_data
 
 def find_git_repos(root_dir):
     """
@@ -110,7 +180,6 @@ def find_git_repos(root_dir):
         for root, dirs, files in os.walk(root_dir):
             if '.git' in dirs:
                 repos.append(root)
-                # Don't descend further into this git repo's subfolders
                 dirs.remove('.git')
     except Exception as e:
         print(f"Error scanning directory {root_dir}: {e}")
@@ -121,14 +190,12 @@ def main():
     # Determine the directories to scan
     script_dir = os.path.dirname(os.path.abspath(__file__))
     readme_path = os.path.join(script_dir, 'README.md')
+    db_path = os.path.join(script_dir, 'git_db.json')
     
-    # We will scan c:\Program_user and C:\Users\<user>\OneDrive
     scan_dirs = [
         os.path.dirname(script_dir),  # c:\Program_user
         os.path.join(os.path.expanduser("~"), "OneDrive")  # OneDrive folder
     ]
-    
-    all_coauthors = []
     
     print("Scanning directories for Git repositories...")
     found_repos = []
@@ -139,61 +206,153 @@ def main():
             print(f"-> Found {len(repos)} Git repos in {d}")
             found_repos.extend(repos)
             
+    # Combine contributors data from all repos
+    combined_data = defaultdict(lambda: {
+        "commits": 0,
+        "additions": 0,
+        "deletions": 0,
+        "history": defaultdict(int)
+    })
+    
     print(f"\nProcessing {len(found_repos)} repositories...")
     for repo_path in found_repos:
         repo_name = os.path.basename(repo_path)
-        repo_coauthors = get_git_coauthors(repo_path)
-        if repo_coauthors:
-            print(f"- {repo_name}: Found {len(repo_coauthors)} co-authored commits by you")
-            all_coauthors.extend(repo_coauthors)
+        repo_data = parse_git_history(repo_path)
+        
+        # Merge repo_data into combined_data
+        for contributor, stats in repo_data.items():
+            combined_data[contributor]["commits"] += stats["commits"]
+            combined_data[contributor]["additions"] += stats["additions"]
+            combined_data[contributor]["deletions"] += stats["deletions"]
+            for week, count in stats["history"].items():
+                combined_data[contributor]["history"][week] += count
                 
-    # Filter out the user's own signatures and unregistered AI emails
-    filtered_coauthors = []
-    for name, email in all_coauthors:
+    # Separate you (User) from other collaborators/AIs
+    user_stats = {
+        "name": "2902Duy",
+        "email": "tduy29.2k4@gmail.com",
+        "commits": 0,
+        "additions": 0,
+        "deletions": 0,
+        "avatar_url": "https://github.com/2902Duy.png",
+        "is_registered": True,
+        "history": defaultdict(int)
+    }
+    
+    external_contributors = defaultdict(lambda: {
+        "commits": 0,
+        "additions": 0,
+        "deletions": 0,
+        "history": defaultdict(int)
+    })
+    
+    for (name, email), stats in combined_data.items():
         lower_name = name.lower()
         lower_email = email.lower()
         
-        # Check user signatures
+        # Check if this contributor is you
         is_self = any(sig in lower_name or sig in lower_email for sig in USER_SIGNATURES)
         
-        # Check unregistered AI signatures
+        if is_self:
+            # Add to your overall user stats
+            user_stats["commits"] += stats["commits"]
+            user_stats["additions"] += stats["additions"]
+            user_stats["deletions"] += stats["deletions"]
+            for week, count in stats["history"].items():
+                user_stats["history"][week] += count
+        else:
+            # It's an external collaborator or bot
+            key = (name, email)
+            external_contributors[key]["commits"] += stats["commits"]
+            external_contributors[key]["additions"] += stats["additions"]
+            external_contributors[key]["deletions"] += stats["deletions"]
+            for week, count in stats["history"].items():
+                external_contributors[key]["history"][week] += count
+
+    # Determine if external co-authors are registered on GitHub
+    processed_contributors = []
+    
+    # 1. Format your user stats
+    user_history_sorted = [{"week": w, "commits": c} for w, c in sorted(user_stats["history"].items())]
+    user_formatted = {
+        "name": user_stats["name"],
+        "email": user_stats["email"],
+        "commits": user_stats["commits"],
+        "additions": user_stats["additions"],
+        "deletions": user_stats["deletions"],
+        "avatar_url": user_stats["avatar_url"],
+        "is_registered": True,
+        "history": user_history_sorted
+    }
+    processed_contributors.append(user_formatted)
+    
+    # 2. Format external co-authors
+    for (name, email), stats in external_contributors.items():
+        lower_name = name.lower()
+        lower_email = email.lower()
+        
+        # Check if email belongs to unregistered AI list
         is_unregistered_ai = any(kw in lower_name or kw in lower_email for kw in UNREGISTERED_AI_KEYWORDS)
         
-        if not is_self and not is_unregistered_ai:
-            filtered_coauthors.append((name, email))
+        # Determine is_registered status
+        is_registered = not is_unregistered_ai
+        
+        # Select avatar representation name
+        avatar_rep = name.lower()
+        if "claude" in avatar_rep:
+            avatar_url = "logo-claude"
+        elif "gemini" in avatar_rep or "antigravity" in avatar_rep:
+            avatar_url = "logo-gemini"
+        elif "gpt" in avatar_rep or "openai" in avatar_rep or "chat" in avatar_rep or "codex" in avatar_rep:
+            avatar_url = "logo-chatgpt"
+        elif "devin" in avatar_rep:
+            avatar_url = "https://avatars.githubusercontent.com/u/158243242?v=4" # Devin Bot avatar
+        else:
+            avatar_url = "generic-dev"
             
-    # Aggregate and count
-    counts = Counter(filtered_coauthors)
+        history_sorted = [{"week": w, "commits": c} for w, c in sorted(stats["history"].items())]
+        
+        processed_contributors.append({
+            "name": name,
+            "email": email,
+            "commits": stats["commits"],
+            "additions": stats["additions"],
+            "deletions": stats["deletions"],
+            "avatar_url": avatar_url,
+            "is_registered": is_registered,
+            "history": history_sorted
+        })
+        
+    # Sort contributors: your account always stays at #1, others are ranked by commits descending
+    user_contributor = [c for c in processed_contributors if c["name"] == "2902Duy"]
+    others = [c for c in processed_contributors if c["name"] != "2902Duy"]
+    others_sorted = sorted(others, key=lambda x: x["commits"], reverse=True)
     
-    # Sort by number of commits in descending order
-    sorted_coauthors = sorted(counts.items(), key=lambda x: x[1], reverse=True)
+    final_contributors = user_contributor + others_sorted
     
-    # Write to coauthors.json as a local database for the frontend
-    import json
-    coauthors_json_path = os.path.join(script_dir, 'coauthors.json')
-    json_data = [
-        {"name": name, "commits": count, "email": email}
-        for (name, email), count in sorted_coauthors
-    ]
+    # Write to git_db.json
+    db_data = {
+        "contributors": final_contributors
+    }
+    
     try:
-        with open(coauthors_json_path, 'w', encoding='utf-8') as f:
-            json.dump(json_data, f, indent=2, ensure_ascii=False)
-        print(f"Successfully wrote database to {coauthors_json_path}!")
+        with open(db_path, 'w', encoding='utf-8') as f:
+            json.dump(db_data, f, indent=2, ensure_ascii=False)
+        print(f"Successfully wrote JSON database to {db_path}!")
     except Exception as e:
-        print(f"Error writing coauthors.json: {e}")
+        print(f"Error writing git_db.json: {e}")
+        
+    # Write to README.md (excluding unregistered ones for the GitHub profile page to stay clean)
+    registered_only_stats = [c for c in others_sorted if c["is_registered"]]
     
-    # Generate markdown table
-    if not sorted_coauthors:
+    if not registered_only_stats:
         markdown_table = "*No registered external co-authors or bots detected in your commits yet.*"
     else:
         markdown_table = "| Co-Author / AI Assistant | Commits | Email Alias |\n"
         markdown_table += "| :--- | :---: | :--- |\n"
-        for (name, email), count in sorted_coauthors:
-            # Highlight AI assistant names nicely
-            markdown_table += f"| **{name}** | {count} | `{email}` |\n"
+        for c in registered_only_stats:
+            markdown_table += f"| **{c['name']}** | {c['commits']} | `{c['email']}` |\n"
             
-    print(f"\nGenerated Co-Author stats (Only registered co-authors/bots for your commits):\n{markdown_table}\n")
-    
     # Update README.md
     if not os.path.exists(readme_path):
         print(f"Error: README.md not found at {readme_path}")
