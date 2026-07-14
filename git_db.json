@@ -3,9 +3,9 @@
     {
       "name": "2902Duy",
       "email": "tduy29.2k4@gmail.com",
-      "commits": 524,
-      "additions": 228990,
-      "deletions": 74203,
+      "commits": 525,
+      "additions": 229091,
+      "deletions": 74549,
       "avatar_url": "https://github.com/2902Duy.png",
       "is_registered": true,
       "history": [
@@ -55,7 +55,7 @@
         },
         {
           "week": "2026-07-13",
-          "commits": 15
+          "commits": 16
         }
       ]
     },
@@ -65,7 +65,7 @@
       "commits": 195,
       "additions": 41624,
       "deletions": 8489,
-      "avatar_url": "logo-claude",
+      "avatar_url": "https://github.com/claude.png",
       "is_registered": true,
       "history": [
         {
@@ -96,7 +96,7 @@
       "commits": 32,
       "additions": 8564,
       "deletions": 951,
-      "avatar_url": "logo-chatgpt",
+      "avatar_url": "https://github.com/openai.png",
       "is_registered": true,
       "history": [
         {
@@ -127,7 +127,7 @@
       "commits": 17,
       "additions": 3963,
       "deletions": 1722,
-      "avatar_url": "logo-gemini",
+      "avatar_url": "https://github.com/google.png",
       "is_registered": false,
       "history": [
         {

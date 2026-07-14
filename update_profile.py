@@ -197,16 +197,16 @@ def normalize_contributor(name, email):
         
     # Check AI/bot models
     if "claude" in lower_name or "claude" in lower_email:
-        return "Claude", "noreply@anthropic.com", "logo-claude", True
+        return "Claude", "noreply@anthropic.com", "https://github.com/claude.png", True
         
     if "gemini" in lower_name or "gemini" in lower_email or "antigravity" in lower_name or "antigravity" in lower_email:
         # Filter out antigravity@google.com entirely
         if "antigravity@google.com" in lower_email:
             return None
-        return "Gemini", "noreply@google.com", "logo-gemini", False
+        return "Gemini", "noreply@google.com", "https://github.com/google.png", False
         
     if any(kw in lower_name or kw in lower_email for kw in ["gpt", "openai", "chat", "codex"]):
-        return "ChatGPT", "noreply@openai.com", "logo-chatgpt", True
+        return "ChatGPT", "noreply@openai.com", "https://github.com/openai.png", True
         
     if "devin" in lower_name or "devin" in lower_email:
         return "Devin AI", "158243242+devin-ai-integration[bot]@users.noreply.github.com", "https://avatars.githubusercontent.com/u/158243242?v=4", True
