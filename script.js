@@ -22,7 +22,6 @@ document.addEventListener("DOMContentLoaded", () => {
   /**
    * Setup Event Listeners for interactive elements
    */
-  def setupEventListeners() {} // Wait, let's write correct JS syntax
   function setupEventListeners() {
     // Toggle switch click event
     toggleRegistered.addEventListener("click", () => {
