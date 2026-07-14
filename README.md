@@ -48,7 +48,7 @@ Below is a dynamically generated table of the AI models and collaborators that h
 | :--- | :---: | :--- |
 | **Claude** | 195 | `noreply@anthropic.com` |
 | **Codex** | 32 | `noreply@openai.com` |
-| **Antigravity** | 18 | `antigravity@google.com` |
+| **Antigravity** | 19 | `antigravity@google.com` |
 | **Devin AI** | 1 | `158243242+devin-ai-integration[bot]@users.noreply.github.com` |
 
 
