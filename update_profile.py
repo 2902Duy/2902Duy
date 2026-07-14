@@ -23,6 +23,17 @@ USER_SIGNATURES = [
     'dqhf.it@gmail.com'
 ]
 
+# Keywords to filter out unregistered AI bot emails/accounts
+UNREGISTERED_AI_KEYWORDS = [
+    'anthropic.com',  # noreply@anthropic.com (Claude)
+    'google.com',     # noreply@google.com, antigravity@google.com (Gemini, Antigravity)
+    'openai.com',     # noreply@openai.com, codex@openai.com (ChatGPT, Codex)
+    'gemini',         # gemini-1.5-pro, gemini-3.5-flash, gemini-2.5-pro
+    'codex',          # codex, gpt-5 codex
+    'gpt-5',          # gpt-5
+    'anomaly.co'      # opencode@anomaly.co
+]
+
 def is_user_author(author_name, author_email):
     """
     Checks if the commit author matches one of your user signatures.
@@ -136,13 +147,19 @@ def main():
             print(f"- {repo_name}: Found {len(repo_coauthors)} co-authored commits by you")
             all_coauthors.extend(repo_coauthors)
                 
-    # Filter out the user's own commits/usernames from the co-authors list
+    # Filter out the user's own signatures and unregistered AI emails
     filtered_coauthors = []
     for name, email in all_coauthors:
         lower_name = name.lower()
         lower_email = email.lower()
-        should_exclude = any(sig in lower_name or sig in lower_email for sig in USER_SIGNATURES)
-        if not should_exclude:
+        
+        # Check user signatures
+        is_self = any(sig in lower_name or sig in lower_email for sig in USER_SIGNATURES)
+        
+        # Check unregistered AI signatures
+        is_unregistered_ai = any(kw in lower_name or kw in lower_email for kw in UNREGISTERED_AI_KEYWORDS)
+        
+        if not is_self and not is_unregistered_ai:
             filtered_coauthors.append((name, email))
             
     # Aggregate and count
@@ -153,7 +170,7 @@ def main():
     
     # Generate markdown table
     if not sorted_coauthors:
-        markdown_table = "*No AI or external co-authors detected in your commits yet.*"
+        markdown_table = "*No registered external co-authors or bots detected in your commits yet.*"
     else:
         markdown_table = "| Co-Author / AI Assistant | Commits | Email Alias |\n"
         markdown_table += "| :--- | :---: | :--- |\n"
@@ -161,7 +178,7 @@ def main():
             # Highlight AI assistant names nicely
             markdown_table += f"| **{name}** | {count} | `{email}` |\n"
             
-    print(f"\nGenerated Co-Author stats (Only commits authored by you):\n{markdown_table}\n")
+    print(f"\nGenerated Co-Author stats (Only registered co-authors/bots for your commits):\n{markdown_table}\n")
     
     # Update README.md
     if not os.path.exists(readme_path):

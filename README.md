@@ -44,26 +44,7 @@ Below is a dynamically generated table of the AI models and collaborators that h
 
 <!-- COAUTHORS:START -->
 
-| Co-Author / AI Assistant | Commits | Email Alias |
-| :--- | :---: | :--- |
-| **Claude Fable 5** | 85 | `noreply@anthropic.com` |
-| **Claude Opus 4.8 (1M context)** | 46 | `noreply@anthropic.com` |
-| **Claude Sonnet 4.6** | 33 | `noreply@anthropic.com` |
-| **Claude** | 21 | `noreply@anthropic.com` |
-| **Codex** | 11 | `codex@openai.com` |
-| **GPT-5 Codex** | 10 | `noreply@openai.com` |
-| **Claude Opus 4.8** | 9 | `noreply@anthropic.com` |
-| **Antigravity** | 8 | `gemini-1.5-pro` |
-| **GPT-5 Codex** | 7 | `codex@openai.com` |
-| **Antigravity** | 4 | `gemini-3.5-flash` |
-| **Antigravity** | 4 | `gemini-2.5-pro` |
-| **Codex GPT-5** | 2 | `codex@openai.com` |
-| **Gemini 1.5 Pro** | 1 | `noreply@google.com` |
-| **Antigravity** | 1 | `antigravity@google.com` |
-| **Codex** | 1 | `codex@gpt-5` |
-| **Claude (Opus 4.8)** | 1 | `noreply@anthropic.com` |
-| **OpenAI Codex** | 1 | `noreply@openai.com` |
-
+*No registered external co-authors or bots detected in your commits yet.*
 
 <!-- COAUTHORS:END -->
 
