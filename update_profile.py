@@ -203,7 +203,7 @@ def normalize_contributor(name, email):
         return "Antigravity", "antigravity@google.com", "https://github.com/google-antigravity.png", True
         
     if any(kw in lower_name or kw in lower_email for kw in ["gpt", "openai", "chat", "codex"]):
-        return "Codex", "noreply@openai.com", "https://github.com/openai.png", True
+        return "Codex", "noreply@openai.com", "https://github.com/codex.png", True
         
     if "devin" in lower_name or "devin" in lower_email:
         return "Devin AI", "158243242+devin-ai-integration[bot]@users.noreply.github.com", "https://avatars.githubusercontent.com/u/158243242?v=4", True
