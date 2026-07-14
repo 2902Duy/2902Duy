@@ -62,6 +62,62 @@
       </div>
     </section>
 
+    <!-- GitHub Contribution Calendar Heatmap Section -->
+    <section class="section" id="contribution-heatmap-section">
+      <h2 id="heatmap-title">471 contributions in the last year</h2>
+      <p style="color: var(--text-muted); margin-bottom: var(--spacing-lg); max-width: 600px;">
+        Hoạt động commit hàng ngày của bạn được mô phỏng theo dạng bản đồ nhiệt (Heatmap) đóng góp chính thức của GitHub.
+      </p>
+      
+      <div class="heatmap-container-wrapper">
+        <div class="heatmap-flex-layout">
+          <!-- Calendar grid wrapper -->
+          <div class="calendar-grid-box">
+            <!-- Months labels header -->
+            <div class="months-labels" id="months-labels">
+              <!-- Dynamically populated via JS -->
+            </div>
+            
+            <div class="calendar-rows-flex">
+              <!-- Weekdays labels sidebar -->
+              <div class="weekdays-labels">
+                <span>Mon</span>
+                <span>Wed</span>
+                <span>Fri</span>
+              </div>
+              
+              <!-- The actual Grid of 371 squares -->
+              <div class="calendar-squares-grid" id="calendar-squares-grid">
+                <!-- Dynamically populated via JS -->
+              </div>
+            </div>
+            
+            <!-- Legend (Less -> More colors indicator) -->
+            <div class="calendar-legend">
+              <span style="font-size: 0.75rem; color: var(--text-sub);">Learn how we count contributions</span>
+              <div class="legend-scale">
+                <span>Less</span>
+                <span class="legend-dot level-0"></span>
+                <span class="legend-dot level-1"></span>
+                <span class="legend-dot level-2"></span>
+                <span class="legend-dot level-3"></span>
+                <span class="legend-dot level-4"></span>
+                <span>More</span>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Years Selector list on the right -->
+          <div class="years-selector-list">
+            <button class="year-btn active" data-year="2026">2026</button>
+            <button class="year-btn" data-year="2025">2025</button>
+            <button class="year-btn" data-year="2024">2024</button>
+            <button class="year-btn" data-year="2023">2023</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- AI Collaborations / Contributors Grid -->
     <section class="section" id="contributors-section">
       <div class="controls-header">

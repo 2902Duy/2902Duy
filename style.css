@@ -388,6 +388,167 @@ h2::after {
   transform: scale(1.15);
 }
 
+/* 8.5 GitHub Contribution Heatmap Grid styling */
+.heatmap-container-wrapper {
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-card);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-lg);
+  margin-bottom: var(--spacing-lg);
+  overflow-x: auto;
+}
+
+.heatmap-flex-layout {
+  display: flex;
+  gap: var(--spacing-lg);
+  align-items: flex-start;
+  min-width: 760px; /* Prevent shrinking too much */
+}
+
+.calendar-grid-box {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.months-labels {
+  display: flex;
+  margin-left: 28px; /* Alignment offset for weekdays column */
+  margin-bottom: 6px;
+  font-size: 0.72rem;
+  color: var(--text-sub);
+  justify-content: space-between;
+  padding-right: 10px;
+}
+
+.calendar-rows-flex {
+  display: flex;
+  gap: 8px;
+}
+
+.weekdays-labels {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  font-size: 0.72rem;
+  color: var(--text-sub);
+  width: 20px;
+  padding: 2px 0;
+  line-height: 1;
+}
+
+.calendar-squares-grid {
+  display: grid;
+  grid-template-flow: column;
+  grid-auto-flow: column;
+  grid-template-rows: repeat(7, 10px);
+  gap: 3px;
+}
+
+.calendar-square {
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  background-color: #1f2937; /* Default level 0 */
+  transition: background-color 0.2s ease;
+  position: relative;
+  cursor: pointer;
+}
+
+/* Green Level Palette */
+.calendar-square.level-0 { background-color: #1f2937; }
+.calendar-square.level-1 { background-color: #0e4429; }
+.calendar-square.level-2 { background-color: #006d32; }
+.calendar-square.level-3 { background-color: #26a641; }
+.calendar-square.level-4 { background-color: #39d353; }
+
+/* Custom Tooltip style */
+.calendar-square[data-tooltip]::before {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%) translateY(-6px);
+  background-color: #111827;
+  color: var(--text-main);
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s ease-in-out, transform 0.15s ease-in-out;
+  border: 1px solid var(--border-card);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+  z-index: 10;
+}
+
+.calendar-square:hover[data-tooltip]::before {
+  opacity: 1;
+  transform: translateX(-50%) translateY(-3px);
+}
+
+.calendar-legend {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: var(--spacing-md);
+  border-top: 1px dashed rgba(255, 255, 255, 0.05);
+  padding-top: var(--spacing-sm);
+}
+
+.legend-scale {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 0.72rem;
+  color: var(--text-sub);
+}
+
+.legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+}
+
+.legend-dot.level-0 { background-color: #1f2937; }
+.legend-dot.level-1 { background-color: #0e4429; }
+.legend-dot.level-2 { background-color: #006d32; }
+.legend-dot.level-3 { background-color: #26a641; }
+.legend-dot.level-4 { background-color: #39d353; }
+
+/* Years Selector List */
+.years-selector-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 80px;
+}
+
+.year-btn {
+  background-color: transparent;
+  border: 1px solid transparent;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  text-align: left;
+  transition: var(--transition-smooth);
+}
+
+.year-btn:hover {
+  color: var(--text-main);
+  background-color: rgba(255, 255, 255, 0.03);
+}
+
+.year-btn.active {
+  background-color: #2563eb;
+  color: white;
+  border-color: #2563eb;
+}
+
 /* 9. GitHub Contributor Cards Grid */
 .grid-contributors {
   display: grid;
