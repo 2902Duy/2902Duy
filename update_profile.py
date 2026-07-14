@@ -186,6 +186,39 @@ def find_git_repos(root_dir):
         
     return repos
 
+def normalize_contributor(name, email):
+    lower_name = name.lower()
+    lower_email = email.lower()
+    
+    # Check your own signatures first
+    is_self = any(sig in lower_name or sig in lower_email for sig in USER_SIGNATURES)
+    if is_self:
+        return "2902Duy", "tduy29.2k4@gmail.com", "https://github.com/2902Duy.png", True
+        
+    # Check AI/bot models
+    if "claude" in lower_name or "claude" in lower_email:
+        return "Claude", "noreply@anthropic.com", "logo-claude", True
+        
+    if "gemini" in lower_name or "gemini" in lower_email or "antigravity" in lower_name or "antigravity" in lower_email:
+        # Filter out antigravity@google.com entirely
+        if "antigravity@google.com" in lower_email:
+            return None
+        return "Gemini", "noreply@google.com", "logo-gemini", False
+        
+    if any(kw in lower_name or kw in lower_email for kw in ["gpt", "openai", "chat", "codex"]):
+        return "ChatGPT", "noreply@openai.com", "logo-chatgpt", True
+        
+    if "devin" in lower_name or "devin" in lower_email:
+        return "Devin AI", "158243242+devin-ai-integration[bot]@users.noreply.github.com", "https://avatars.githubusercontent.com/u/158243242?v=4", True
+
+    # Check other unregistered AIs
+    is_unregistered_ai = any(kw in lower_name or kw in lower_email for kw in UNREGISTERED_AI_KEYWORDS)
+    if is_unregistered_ai:
+        return "Other AI Assistant", "noreply@ai.com", "logo-generic", False
+        
+    # Standard human/bot contributor
+    return name, email, "generic-dev", True
+
 def main():
     # Determine the directories to scan
     script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -227,99 +260,47 @@ def main():
             for week, count in stats["history"].items():
                 combined_data[contributor]["history"][week] += count
                 
-    # Separate you (User) from other collaborators/AIs
-    user_stats = {
-        "name": "2902Duy",
-        "email": "tduy29.2k4@gmail.com",
-        "commits": 0,
-        "additions": 0,
-        "deletions": 0,
-        "avatar_url": "https://github.com/2902Duy.png",
-        "is_registered": True,
-        "history": defaultdict(int)
-    }
-    
-    external_contributors = defaultdict(lambda: {
-        "commits": 0,
-        "additions": 0,
-        "deletions": 0,
-        "history": defaultdict(int)
-    })
+    # Group contributors (combining Claude models, Gemini models, etc.)
+    grouped_contributors = {}
     
     for (name, email), stats in combined_data.items():
-        lower_name = name.lower()
-        lower_email = email.lower()
-        
-        # Check if this contributor is you
-        is_self = any(sig in lower_name or sig in lower_email for sig in USER_SIGNATURES)
-        
-        if is_self:
-            # Add to your overall user stats
-            user_stats["commits"] += stats["commits"]
-            user_stats["additions"] += stats["additions"]
-            user_stats["deletions"] += stats["deletions"]
-            for week, count in stats["history"].items():
-                user_stats["history"][week] += count
-        else:
-            # It's an external collaborator or bot
-            key = (name, email)
-            external_contributors[key]["commits"] += stats["commits"]
-            external_contributors[key]["additions"] += stats["additions"]
-            external_contributors[key]["deletions"] += stats["deletions"]
-            for week, count in stats["history"].items():
-                external_contributors[key]["history"][week] += count
-
-    # Determine if external co-authors are registered on GitHub
-    processed_contributors = []
-    
-    # 1. Format your user stats
-    user_history_sorted = [{"week": w, "commits": c} for w, c in sorted(user_stats["history"].items())]
-    user_formatted = {
-        "name": user_stats["name"],
-        "email": user_stats["email"],
-        "commits": user_stats["commits"],
-        "additions": user_stats["additions"],
-        "deletions": user_stats["deletions"],
-        "avatar_url": user_stats["avatar_url"],
-        "is_registered": True,
-        "history": user_history_sorted
-    }
-    processed_contributors.append(user_formatted)
-    
-    # 2. Format external co-authors
-    for (name, email), stats in external_contributors.items():
-        lower_name = name.lower()
-        lower_email = email.lower()
-        
-        # Check if email belongs to unregistered AI list
-        is_unregistered_ai = any(kw in lower_name or kw in lower_email for kw in UNREGISTERED_AI_KEYWORDS)
-        
-        # Determine is_registered status
-        is_registered = not is_unregistered_ai
-        
-        # Select avatar representation name
-        avatar_rep = name.lower()
-        if "claude" in avatar_rep:
-            avatar_url = "logo-claude"
-        elif "gemini" in avatar_rep or "antigravity" in avatar_rep:
-            avatar_url = "logo-gemini"
-        elif "gpt" in avatar_rep or "openai" in avatar_rep or "chat" in avatar_rep or "codex" in avatar_rep:
-            avatar_url = "logo-chatgpt"
-        elif "devin" in avatar_rep:
-            avatar_url = "https://avatars.githubusercontent.com/u/158243242?v=4" # Devin Bot avatar
-        else:
-            avatar_url = "generic-dev"
+        norm = normalize_contributor(name, email)
+        if norm is None:
+            continue
             
-        history_sorted = [{"week": w, "commits": c} for w, c in sorted(stats["history"].items())]
+        norm_name, norm_email, avatar_url, is_registered = norm
         
+        if norm_name not in grouped_contributors:
+            grouped_contributors[norm_name] = {
+                "name": norm_name,
+                "email": norm_email,
+                "commits": 0,
+                "additions": 0,
+                "deletions": 0,
+                "avatar_url": avatar_url,
+                "is_registered": is_registered,
+                "history": defaultdict(int)
+            }
+            
+        group = grouped_contributors[norm_name]
+        group["commits"] += stats["commits"]
+        group["additions"] += stats["additions"]
+        group["deletions"] += stats["deletions"]
+        for week, count in stats["history"].items():
+            group["history"][week] += count
+            
+    # Format grouped contributors
+    processed_contributors = []
+    for norm_name, group in grouped_contributors.items():
+        history_sorted = [{"week": w, "commits": c} for w, c in sorted(group["history"].items())]
         processed_contributors.append({
-            "name": name,
-            "email": email,
-            "commits": stats["commits"],
-            "additions": stats["additions"],
-            "deletions": stats["deletions"],
-            "avatar_url": avatar_url,
-            "is_registered": is_registered,
+            "name": group["name"],
+            "email": group["email"],
+            "commits": group["commits"],
+            "additions": group["additions"],
+            "deletions": group["deletions"],
+            "avatar_url": group["avatar_url"],
+            "is_registered": group["is_registered"],
             "history": history_sorted
         })
         
