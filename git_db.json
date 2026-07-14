@@ -3,9 +3,9 @@
     {
       "name": "2902Duy",
       "email": "tduy29.2k4@gmail.com",
-      "commits": 525,
-      "additions": 229091,
-      "deletions": 74549,
+      "commits": 526,
+      "additions": 229101,
+      "deletions": 74559,
       "avatar_url": "https://github.com/2902Duy.png",
       "is_registered": true,
       "history": [
@@ -55,7 +55,7 @@
         },
         {
           "week": "2026-07-13",
-          "commits": 16
+          "commits": 17
         }
       ]
     },
@@ -122,17 +122,17 @@
       ]
     },
     {
-      "name": "Gemini",
-      "email": "noreply@google.com",
-      "commits": 17,
-      "additions": 3963,
-      "deletions": 1722,
-      "avatar_url": "https://github.com/google.png",
-      "is_registered": false,
+      "name": "Antigravity",
+      "email": "antigravity@google.com",
+      "commits": 18,
+      "additions": 5967,
+      "deletions": 2362,
+      "avatar_url": "./antigravity.png",
+      "is_registered": true,
       "history": [
         {
           "week": "2026-06-22",
-          "commits": 16
+          "commits": 17
         },
         {
           "week": "2026-07-13",
