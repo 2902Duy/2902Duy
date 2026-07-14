@@ -378,7 +378,7 @@ document.addEventListener("DOMContentLoaded", () => {
           currentMonth = month;
           const monthLabel = document.createElement("span");
           monthLabel.textContent = monthsArray[month];
-          monthLabel.style.gridColumnStart = colIndex + 1;
+          monthLabel.style.gridColumn = `${colIndex + 1} / span 4`;
           monthsLabels.appendChild(monthLabel);
         }
         colIndex++;
